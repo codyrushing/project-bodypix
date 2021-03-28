@@ -149,5 +149,10 @@ Toggle Body Part Segmentation: 'p'
 Reset: 'r'
 ```
 
+## Raspberry Pi notes:
 
-
+* Install pycoral.  Use version 1.0.1 
+    ```
+    pip3 install --extra-index-url https://github.com/google-coral/pycoral/releases/download/v1.0.1/pycoral-1.0.1-cp37-cp37m-linux_armv7l.whl pycoral
+    ```
+* Rename `posenet_lib/armv7a` => `posenet_lib/armv7l`
