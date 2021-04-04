@@ -1,0 +1,23 @@
+{
+  "name": "project-bodypix",
+  "version": "1.0.0",
+  "description": "BodyPix is an open-source machine learning model which allows for person and body-part segmentation. This has previously been released as a [Tensorflow.Js](https://blog.tensorflow.org/2019/11/updated-bodypix-2.html) project.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codyrushing/project-bodypix.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/codyrushing/project-bodypix/issues"
+  },
+  "homepage": "https://github.com/codyrushing/project-bodypix#readme",
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "globby": "^11.0.3"
+  }
+}
