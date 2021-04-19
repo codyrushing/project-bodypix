@@ -29,6 +29,7 @@ import gstreamer
 from pose_engine import PoseEngine, EDGES, BODYPIX_PARTS
 
 # Color mapping for bodyparts
+# array of indexes corresponding to each bodypart
 RED_BODYPARTS = [k for k,v in BODYPIX_PARTS.items() if "right" in v]
 GREEN_BODYPARTS = [k for k,v in BODYPIX_PARTS.items() if "hand" in v or "torso" in v]
 BLUE_BODYPARTS = [k for k,v in BODYPIX_PARTS.items() if "leg" in v or "arm" in v or "face" in v or "hand" in v]
@@ -76,17 +77,30 @@ class Callback:
     # clip heatmap to create a mask
     heatmap = clip_heatmap(heatmap,  -1.0,  1.0)
 
+    # heatmap looks to be a representation of all the segmenation pixels, but in 0..1 floating points
+
     if self.bodyparts:
+      # dstack 
       rgb_heatmap = np.dstack([
+            # extract out each body part by group
+            # sum them up
+            # axis=2 says to sum up everything but dimension 2, which is the body segment identifier i think?
+            # subtract 0.5, which maybe turns them into polar coords?
             heatmap*(np.sum(bodyparts[:,:,RED_BODYPARTS], axis=2)-0.5)*100,
             heatmap*(np.sum(bodyparts[:,:,GREEN_BODYPARTS], axis=2)-0.5)*100,
             heatmap*(np.sum(bodyparts[:,:,BLUE_BODYPARTS], axis=2)-0.5)*100,
           ])
     else:
       rgb_heatmap = np.dstack([heatmap[:,:]*100]*3)
+      # an array with three items, 
+
+      # everything from 1 to beyond is 0, (green and blue)
+      # thus red
       rgb_heatmap[:,:,1:] = 0 # make it red
 
-    rgb_heatmap= 155*np.clip(rgb_heatmap, 0, 1)
+    # set all non-zero values to 255
+    rgb_heatmap= 255*np.clip(rgb_heatmap, 0, 1)
+
     rescale_factor = [
       image.shape[0]/heatmap.shape[0],
       image.shape[1]/heatmap.shape[1],
@@ -146,6 +160,10 @@ def main():
     parser.add_argument('--nobodyparts', dest='bodyparts', action='store_false', help=argparse.SUPPRESS)
     parser.set_defaults(bodyparts=True)
 
+    parser.add_argument('--render', dest='render', action='store_true', help='Render output to OpenGL renderer [--norender]')
+    parser.add_argument('--norender', dest='render', action='store_false', help=argparse.SUPPRESS)
+    parser.set_defaults(render=True)
+
     parser.add_argument('--h264', help='Use video/x-h264 input', action='store_true')
     parser.add_argument('--jpeg', help='Use video/jpeg input', action='store_true')
     args = parser.parse_args()
@@ -172,6 +190,7 @@ def main():
                            src_size, inference_size,
                            mirror=args.mirror,
                            videosrc=args.videosrc,
+                           render=args.render,
                            h264=args.h264,
                            jpeg=args.jpeg)
 

@@ -81,6 +81,7 @@ def run_pipeline(user_function,
                  mirror=False,
                  h264=False,
                  jpeg=False,
+                 render=True,
                  videosrc='/dev/video0'):
     PIPELINE = 'v4l2src device=%s ! {src_caps} ! {leaky_q} '%videosrc
     if h264:
@@ -134,14 +135,19 @@ def run_pipeline(user_function,
     pipeline = Gst.parse_launch(pipeline)
     appsink = pipeline.get_by_name('appsink')
 
-    appsrc_caps = APPSRC_CAPS.format(width=appsink_size[0], height=appsink_size[1])
-    appsrc_pipeline = APPSRC_PIPELINE.format(leaky_q=LEAKY_Q,
-                                             appsrc_caps=appsrc_caps,
-                                             src_caps=src_caps)
-    print('Gstreamer appsrc pipeline: ', appsrc_pipeline)
-    appsrc_pipeline = Gst.parse_launch(appsrc_pipeline)
-    appsrc = appsrc_pipeline.get_by_name('appsrc')
-    overlay = appsrc_pipeline.get_by_name('overlay')
+    appsrc = None
+    appsrc_pipeline = None
+    appsrc_caps = None
+    overlay = None
+    if render:
+        appsrc_caps = APPSRC_CAPS.format(width=appsink_size[0], height=appsink_size[1])
+        appsrc_pipeline = APPSRC_PIPELINE.format(leaky_q=LEAKY_Q,
+                                                appsrc_caps=appsrc_caps,
+                                                src_caps=src_caps)
+        print('Gstreamer appsrc pipeline: ', appsrc_pipeline)
+        appsrc_pipeline = Gst.parse_launch(appsrc_pipeline)
+        appsrc = appsrc_pipeline.get_by_name('appsrc')
+        overlay = appsrc_pipeline.get_by_name('overlay')
 
     appsink.connect('new-sample', partial(on_new_sample,
                                           appsrc=appsrc, overlay=overlay,
@@ -156,7 +162,8 @@ def run_pipeline(user_function,
 
     # Run pipeline.
     pipeline.set_state(Gst.State.PLAYING)
-    appsrc_pipeline.set_state(Gst.State.PLAYING)
+    if appsrc_pipeline is not None:
+        appsrc_pipeline.set_state(Gst.State.PLAYING)
     try:
         loop.run()
     except:
@@ -164,6 +171,7 @@ def run_pipeline(user_function,
 
     # Clean up.
     pipeline.set_state(Gst.State.NULL)
-    appsrc_pipeline.set_state(Gst.State.NULL)
+    if appsrc_pipeline is not None:
+        appsrc_pipeline.set_state(Gst.State.NULL)
     while GLib.MainContext.default().iteration(False):
         pass
