@@ -27,6 +27,8 @@ from PIL import Image
 
 import gstreamer
 from pose_engine import PoseEngine, EDGES, BODYPIX_PARTS
+from ws_client import websocket_send
+import json
 
 # Color mapping for bodyparts
 # array of indexes corresponding to each bodypart
@@ -79,6 +81,13 @@ class Callback:
 
     # heatmap looks to be a representation of all the segmenation pixels, but in 0..1 floating points
 
+    # image is 640x480x3 (w | h | rgb) using uint8
+    # heatmap is 31x40 using float32
+    # that's because there are 16 strides 
+
+    heatmap = heatmap.clip(0, 1)
+    websocket_send(json.dumps(heatmap.tolist()))
+
     if self.bodyparts:
       # dstack 
       rgb_heatmap = np.dstack([
@@ -94,12 +103,12 @@ class Callback:
       rgb_heatmap = np.dstack([heatmap[:,:]*100]*3)
       # an array with three items, 
 
-      # everything from 1 to beyond is 0, (green and blue)
+      # everything from index 1 to beyond is 0, (green and blue)
       # thus red
       rgb_heatmap[:,:,1:] = 0 # make it red
 
     # set all non-zero values to 255
-    rgb_heatmap= 255*np.clip(rgb_heatmap, 0, 1)
+    # rgb_heatmap= 255*np.clip(rgb_heatmap, 0, 1)
 
     rescale_factor = [
       image.shape[0]/heatmap.shape[0],

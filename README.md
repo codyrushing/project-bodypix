@@ -156,3 +156,15 @@ Reset: 'r'
     pip3 install --extra-index-url https://github.com/google-coral/pycoral/releases/download/v1.0.1/pycoral-1.0.1-cp37-cp37m-linux_armv7l.whl pycoral
     ```
 * Rename `posenet_lib/armv7a` => `posenet_lib/armv7l`
+
+## bitmap => svg notes
+* https://www.npmjs.com/package/potrace
+* https://github.com/jankovicsandras/imagetracerjs
+
+# TODO
+* heatmaps is currently a bitmap, 0 is definitely not a person, 1 is definitely a person, in between is some level of confidence that it is a person.
+* send that over to websocket
+* node.js uses lib to convert to edge verteces.
+    * To get verteces would be edge detection on a 2d array of pixels.  you could probably write this yourself in js
+* using those edge verteces, match them to the pose keypoints.  shape + pose = person.
+* for person continuity over consecutive frames, you might need to store recent persons to track which incoming data belongs to each person by doing a diff on it.  
