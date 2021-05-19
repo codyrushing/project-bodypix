@@ -24,6 +24,7 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
+    "imagetracerjs": "^1.2.6",
     "ws": "^7.4.5"
   }
 }

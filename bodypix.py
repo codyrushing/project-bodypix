@@ -86,6 +86,7 @@ class Callback:
     # that's because there are 16 strides 
 
     heatmap = heatmap.clip(0, 1)
+    # send heatmap scaled up to 255
     websocket_send(json.dumps(heatmap.tolist()))
 
     if self.bodyparts:
