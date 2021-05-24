@@ -87,7 +87,12 @@ class Callback:
 
     heatmap = heatmap.clip(0, 1)
     # send heatmap scaled up to 255
-    websocket_send(json.dumps(heatmap.tolist()))
+    # TODO, add poses here
+    websocket_send(
+      json.dumps({
+        'heatmap': heatmap.tolist()
+      })
+    )
 
     if self.bodyparts:
       # dstack 
@@ -109,6 +114,7 @@ class Callback:
       rgb_heatmap[:,:,1:] = 0 # make it red
 
     # set all non-zero values to 255
+    # commenting this out to better visualize the less confident areas
     # rgb_heatmap= 255*np.clip(rgb_heatmap, 0, 1)
 
     rescale_factor = [
