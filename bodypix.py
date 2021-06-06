@@ -90,7 +90,8 @@ class Callback:
     # TODO, add poses here
     websocket_send(
       json.dumps({
-        'heatmap': heatmap.tolist()
+        'heatmap': heatmap.tolist(),        
+        'poses': [pose.export() for pose in poses]
       })
     )
 

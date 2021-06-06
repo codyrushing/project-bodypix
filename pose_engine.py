@@ -101,16 +101,23 @@ BODYPIX_PARTS = {
 }
 
 class Keypoint:
-    __slots__ = ['k', 'yx', 'score']
+    __slots__ = ['k', 'ki', 'yx', 'score']
 
-    def __init__(self, k, yx, score=None):
+    def __init__(self, k, ki, yx, score=None):
         self.k = k
+        self.ki = ki
         self.yx = yx
         self.score = score
 
     def __repr__(self):
         return 'Keypoint(<{}>, {}, {})'.format(KEYPOINTS[self.k], self.yx, self.score)
-
+    
+    def export(self):
+        return {
+            'ki': self.ki,
+            'yx': self.yx.tolist(),
+            'score': str(self.score)
+        }
 
 class Pose:
     __slots__ = ['keypoints', 'score']
@@ -122,6 +129,11 @@ class Pose:
 
     def __repr__(self):
         return 'Pose({}, {})'.format(self.keypoints, self.score)
+
+    def export(self, threshold=0.2):
+        return {
+            'keypoints': [keypoint.export() for [keypoint_label, keypoint] in self.keypoints.items() if keypoint.score > threshold]
+        }
 
 
 class PoseEngine:
@@ -220,7 +232,7 @@ class PoseEngine:
         for pose_i in range(nposes):
             keypoint_dict = {}
             for point_i, point in enumerate(keypoints[pose_i]):
-                keypoint = Keypoint(KEYPOINTS[point_i], point,
+                keypoint = Keypoint(KEYPOINTS[point_i], point_i, point,
                                     keypoint_scores[pose_i, point_i])
                 if self._mirror: keypoint.yx[1] = self.image_width - keypoint.yx[1]
                 keypoint_dict[KEYPOINTS[point_i]] = keypoint
