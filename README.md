@@ -168,3 +168,8 @@ Reset: 'r'
     * To get verteces would be edge detection on a 2d array of pixels.  you could probably write this yourself in js
 * using those edge verteces, match them to the pose keypoints.  shape + pose = person.
 * for person continuity over consecutive frames, you might need to store recent persons to track which incoming data belongs to each person by doing a diff on it.  
+
+# Notes
+This command will list the supported formats/resolutions for the usb camera
+
+`v4l2-ctl --list-formats-ext --device /dev/video1`

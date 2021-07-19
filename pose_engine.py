@@ -112,7 +112,7 @@ class Keypoint:
         self.score = score
 
     def __repr__(self):
-        return 'Keypoint(<{}>, {}, {})'.format(KEYPOINTS[self.k], self.yx, self.score)
+        return 'Keypoint(<{}>, {}, {})'.format(KEYPOINTS[self.ki], self.yx, self.score)
     
     def export(self):
         return {

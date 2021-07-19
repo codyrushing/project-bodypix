@@ -24,6 +24,9 @@ import queue
 import numpy as np
 from PIL import Image
 
+from ws_client import websocket_send
+import json
+
 import gi
 gi.require_version('Gst', '1.0')
 gi.require_version('GstBase', '1.0')
@@ -536,6 +539,17 @@ class Callback:
         data = self.inf_q.get()
         poses, heatmap, bodyparts = self.engine.ParseOutputs(data)
 
+        def clip_heatmap(heatmap, v0, v1):
+            a = v0 / (v0 - v1);
+            b = 1.0 / (v1 - v0);
+            return np.clip(a + b * heatmap, 0.0, 1.0);
+
+
+        # wtf is poses, heatmap, and bodyparts
+        # each heatmap item corresponds to a BODYPIX_PARTS item in pose_engine.py
+        # each heatmaps length is related to the size of the model
+        #         
+        
         # Clip heatmaps according to aspect ratio difference between camera
         # and inference input size
         hm_crop_size = self.get_heatmap_texture_size()
@@ -551,6 +565,18 @@ class Callback:
           hbox_topleft[0]:hbox_topleft[0]+hm_crop_size[1],
           hbox_topleft[1]:hbox_topleft[1]+hm_crop_size[0]
         ]
+
+        try:
+            data_heatmap = clip_heatmap(heatmap, -1.0, 1.0)
+            data_heatmap = heatmap.clip(0, 1)
+            websocket_send(
+                json.dumps({
+                    'heatmap': data_heatmap.tolist(),        
+                    'poses': [pose.export() for pose in poses]
+                })
+            )
+        except:
+            pass
 
         if self.bodyparts:
           # Turn bodyparts into different hues, overall heatmap

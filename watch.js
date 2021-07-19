@@ -19,7 +19,7 @@ const { SSH_USER, SSH_HOST, TARGET_PROJECT_ROOT } = process.env;
 			)
 		);
     fs.watch(source, function onFileChanged(event){
-			const scpProcess = spawn('scp', [source, `${SSH_USER}@${SSH_HOST}:${target}`])
+			const scpProcess = spawn('scp', [source, `${SSH_USER}@${SSH_HOST}:${target}`]);
 			
 			scpProcess
 				.on('error', function onSCPError(err){
