@@ -176,4 +176,4 @@ This command will list the supported formats/resolutions for the usb camera
 
 Command to run the app:
 
-`python3 bodypix_gl_imx.py --jpeg --model models/bodypix_mobilenet_v1_075_768_576_16_quant_edgetpu_decoder.tflite --videosrc /dev/video1 --width 1280 --height 720 --mirror`
+`python3 bodypix_gl_imx.py --jpeg --model models/bodypix_mobilenet_v1_075_1024_768_16_quant_edgetpu_decoder.tflite --videosrc /dev/video1 --width 1280 --height 720 --mirror`
