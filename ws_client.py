@@ -20,7 +20,10 @@
 # https://github.com/websocket-client/websocket-client/issues/580
 import websocket
 import threading, time
+
+wss_host = '192.168.1.178:8080'
 ws = None
+
 def on_close():
   global ws
   print('disconnected from server')
@@ -36,7 +39,7 @@ def connect_websocket():
   global ws
   print('connect_websocket')
   ws = websocket.WebSocketApp(
-    "ws://192.168.1.178:8080", 
+    f"ws://{wss_host}", 
     on_error=on_error, 
     on_open=on_open, 
     on_close=on_close

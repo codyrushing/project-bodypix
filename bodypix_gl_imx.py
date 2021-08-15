@@ -221,7 +221,7 @@ class Callback:
         self.bboxes = True
         self.anon = False
         self.hm = True
-        self.bodyparts = True
+        self.bodyparts = False
 
     def gc_loop(self):
         while self.running:
