@@ -117,7 +117,7 @@ class Keypoint:
     def export(self):
         return {
             'ki': self.ki,
-            'point': [self.yx[1] / self.image_width, self.yx[0] / self.image_height],
+            'pos': [self.yx[1] / self.image_width, self.yx[0] / self.image_height],
             'score': str(self.score)
         }
 
