@@ -27,7 +27,7 @@ from PIL import Image
 
 import gstreamer
 from pose_engine import PoseEngine, EDGES, BODYPIX_PARTS
-from ws_client import websocket_send
+# from ws_client import websocket_send
 import json
 
 # Color mapping for bodyparts
@@ -88,13 +88,16 @@ class Callback:
     heatmap = heatmap.clip(0, 1)
     # send heatmap scaled up to 255
     # TODO, add poses here
-    websocket_send(
-      json.dumps({
-        'heatmap': heatmap.tolist(),        
-        'poses': [pose.export() for pose in poses]
-      })
-    )
-
+    # websocket_send(
+    #   json.dumps({
+    #     'heatmap': heatmap.tolist(),        
+    #     'poses': [pose.export() for pose in poses],
+    #     'width': image.width,
+    #     'height': image.height
+    #   })
+    # )
+    #
+    
     if self.bodyparts:
       # dstack 
       rgb_heatmap = np.dstack([

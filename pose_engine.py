@@ -109,7 +109,7 @@ class Keypoint:
         self.yx = yx
         self.image_width = image_width
         self.image_height = image_height
-        self.score = score
+        self.score = round(score, 4)
 
     def __repr__(self):
         return 'Keypoint(<{}>, {}, {})'.format(KEYPOINTS[self.ki], self.yx, self.score)
@@ -117,8 +117,8 @@ class Keypoint:
     def export(self):
         return {
             'ki': self.ki,
-            'pos': [self.yx[1] / self.image_width, self.yx[0] / self.image_height],
-            'score': str(self.score)
+            'pos': [round(self.yx[1] / self.image_width, 5), round(self.yx[0] / self.image_height, 5)],
+            'score': round(self.score.item(), 3)
         }
 
 class Pose:
@@ -132,7 +132,7 @@ class Pose:
     def __repr__(self):
         return 'Pose({}, {})'.format(self.keypoints, self.score)
 
-    def export(self, threshold=0.2):
+    def export(self, threshold=0.5):
         return {
             'keypoints': [keypoint.export() for [keypoint_label, keypoint] in self.keypoints.items() if keypoint.score > threshold]
         }

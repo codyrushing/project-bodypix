@@ -159,7 +159,6 @@ Reset: 'r'
 
 ## bitmap => svg notes
 * https://www.npmjs.com/package/potrace
-* https://github.com/jankovicsandras/imagetracerjs
 
 # TODO
 * heatmaps is currently a bitmap, 0 is definitely not a person, 1 is definitely a person, in between is some level of confidence that it is a person.

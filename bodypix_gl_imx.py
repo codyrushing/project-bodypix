@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import traceback
 import argparse
 import collections
 import io
@@ -569,13 +570,24 @@ class Callback:
         try:
             data_heatmap = clip_heatmap(heatmap, -1.0, 1.0)
             data_heatmap = heatmap.clip(0, 1)
+            # data_heatmap = [row.round(5) for row in data_heatmap.tolist()]
+            data_heatmap = data_heatmap.tolist()
+
+            def truncate_heatmap_value(v):
+                if v == 0 or v == 1:
+                    return int(v)
+                return round(v,4)
+
+            for row_i, row in enumerate(data_heatmap):
+                data_heatmap[row_i] = [truncate_heatmap_value(v) for v in row]
             websocket_send(
                 json.dumps({
-                    'heatmap': data_heatmap.tolist(),        
+                    'heatmap': data_heatmap,
                     'poses': [pose.export() for pose in poses]
                 })
             )
-        except:
+        except Exception:
+            traceback.print_exc()
             pass
 
         if self.bodyparts:
@@ -710,6 +722,7 @@ class GstPipeline:
 
         try:
             # Run pipeline.
+            traceback.print_exc()
             self.pipeline.set_state(Gst.State.PLAYING)
             Gtk.main()
         except:

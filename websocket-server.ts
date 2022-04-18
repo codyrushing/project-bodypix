@@ -6,6 +6,4 @@ wss.on('connection', function connection(client) {
   client.on('message', function incoming(message) {
     console.log(JSON.parse(message));
   });
-
-  client.send('something');
 });
